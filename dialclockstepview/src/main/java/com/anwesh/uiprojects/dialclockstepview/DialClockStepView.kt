@@ -195,4 +195,25 @@ class DialClockStepView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : DialClockStepView) {
+        private val animator : Animator = Animator(view)
+        private val dcs : DialClockStep = DialClockStep(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            dcs.draw(canvas, paint)
+            animator.animate {
+                dcs.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            dcs.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
