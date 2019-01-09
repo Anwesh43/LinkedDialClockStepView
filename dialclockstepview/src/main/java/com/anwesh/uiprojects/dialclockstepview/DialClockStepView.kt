@@ -16,10 +16,11 @@ val nodes : Int = 5
 val dials : Int = 3
 val scGap : Float = 0.05f
 val scDiv : Double = 0.51
-val sizeFactor : Float = 2.6f
+val sizeFactor : Float = 2.4f
 val strokeFactor : Int = 90
 val foreColor : Int = Color.parseColor("#4527A0")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val dialRFactor : Float = 3.8f
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -41,23 +42,27 @@ fun Canvas.drawDial(x : Float, y : Float, r : Float, deg : Float, paint : Paint)
 fun Canvas.drawDCNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
-    val gap : Float = w / (nodes + 1)
+    val gap : Float = h / (nodes + 1)
     val size : Float = gap / sizeFactor
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
     val gapDeg : Float = 360f / dials
+    val dialR : Float = size / dialRFactor
+    val kr : Float = size - dialR * 1.5f
     paint.style = Paint.Style.STROKE
-    paint.strokeWidth = Math.min(w, h) / 60
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.strokeCap = Paint.Cap.ROUND
     paint.color = foreColor
     save()
-    translate(gap * (i + 1), h/2)
-    drawDial(0f, 0f, size, 360f * sc2, paint)
+    translate(w/2, gap * (i + 1))
+    drawDial(0f, 0f, size,360f * sc2, paint)
     for (j in 0..(dials - 1)) {
         val sc : Float = sc1.divideScale(j, dials)
+        val currDeg : Float = -gapDeg / 10 + gapDeg * j
+        val x : Float = kr * Math.cos(currDeg * Math.PI/180).toFloat()
+        val y : Float = kr * Math.sin(currDeg * Math.PI/180).toFloat()
         save()
-        rotate(gapDeg / 4 + (gapDeg) * j)
-        drawDial(size, 0f, size/4, 360f * sc, paint)
+        drawDial(x, y, dialR, 360f * sc, paint)
         restore()
     }
     restore()
