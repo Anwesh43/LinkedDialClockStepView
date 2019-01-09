@@ -217,4 +217,12 @@ class DialClockStepView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+        fun create(activity : Activity) : DialClockStepView {
+            val view : DialClockStepView = DialClockStepView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
